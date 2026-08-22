@@ -253,8 +253,12 @@ export default function MapContent() {
         {/* SHELTERS (vacancy-colored) */}
         {mapLayers.shelters && mockShelters.map((shelter) => {
           const vacancyPct = Math.round((shelter.available_capacity / shelter.total_capacity) * 100);
-          const loadPct = 100 - vacancyPct;
           const incoming = assignments.filter(a => a.shelter_id === shelter.id).reduce((s, a) => s + a.assigned_population, 0);
+          
+          // Calculate projected vacancy after arrivals
+          const projectedVacantBeds = Math.max(0, shelter.available_capacity - incoming);
+          const projectedVacancyPct = Math.round((projectedVacantBeds / shelter.total_capacity) * 100);
+          
           const assignedZones = assignments.filter(a => a.shelter_id === shelter.id).map(a => mockPopulationZones.find(z => z.id === a.zone_id)?.name).filter(Boolean);
 
           return (
@@ -272,11 +276,20 @@ export default function MapContent() {
                   </table>
                   <div style={{ marginBottom: '8px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', marginBottom: '2px' }}>
-                      <span style={{ color: '#64748b' }}>Vacancy</span>
+                      <span style={{ color: '#64748b' }}>Current Vacancy</span>
                       <span style={{ fontWeight: 800, color: vacancyPct <= 10 ? '#ef4444' : vacancyPct <= 30 ? '#f97316' : '#22c55e' }}>{vacancyPct}%</span>
                     </div>
-                    <div style={{ width: '100%', height: '6px', backgroundColor: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
+                    <div style={{ width: '100%', height: '6px', backgroundColor: '#e2e8f0', borderRadius: '3px', overflow: 'hidden', marginBottom: '4px' }}>
                       <div style={{ width: Math.min(vacancyPct, 100) + '%', height: '100%', borderRadius: '3px', backgroundColor: vacancyPct <= 10 ? '#ef4444' : vacancyPct <= 30 ? '#f97316' : vacancyPct <= 60 ? '#eab308' : '#22c55e' }} />
+                    </div>
+                    
+                    {/* Projected Vacancy Bar */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', marginBottom: '2px' }}>
+                      <span style={{ color: '#64748b' }}>Projected Vacancy (after arrivals)</span>
+                      <span style={{ fontWeight: 800, color: projectedVacancyPct <= 10 ? '#ef4444' : projectedVacancyPct <= 30 ? '#f97316' : '#22c55e' }}>{projectedVacancyPct}%</span>
+                    </div>
+                    <div style={{ width: '100%', height: '6px', backgroundColor: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
+                      <div style={{ width: Math.min(projectedVacancyPct, 100) + '%', height: '100%', borderRadius: '3px', backgroundColor: projectedVacancyPct <= 10 ? '#ef4444' : projectedVacancyPct <= 30 ? '#f97316' : projectedVacancyPct <= 60 ? '#eab308' : '#22c55e' }} />
                     </div>
                   </div>
                   <div style={{ background: '#f0fdf4', borderRadius: '4px', padding: '6px', border: '1px solid #dcfce7', marginBottom: '6px' }}>

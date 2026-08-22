@@ -69,7 +69,7 @@ export default function ReportsPage() {
           {/* Report Header */}
           <div className="flex justify-between items-start border-b pb-6">
             <div>
-              <div className="text-2xl font-bold tracking-tight text-slate-900">SANKAT SETU</div>
+              <div className="text-2xl font-bold tracking-tight text-slate-900">SHARAN SETU</div>
               <div className="text-sm text-slate-500 mt-0.5">Disaster Shelter & Evacuation Intelligence</div>
               <div className="mt-2 inline-flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-bold px-2.5 py-1 rounded">
                 <Shield className="h-3 w-3" />
@@ -184,7 +184,7 @@ export default function ReportsPage() {
 
           {/* Footer */}
           <div className="border-t pt-4 text-xs text-slate-400 text-center">
-            SANKAT SETU · Disaster Shelter & Evacuation Intelligence · Simulation Report · {timestamp}
+            SHARAN SETU · Disaster Shelter & Evacuation Intelligence · Simulation Report · {timestamp}
           </div>
         </div>
       </div>

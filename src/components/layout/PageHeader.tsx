@@ -18,7 +18,7 @@ export default function PageHeader() {
     <header className="bg-slate-900 text-white h-[44px] flex items-center px-4 shrink-0 border-b border-slate-700">
       <div className="flex items-center gap-2">
         <ShieldAlert className="h-5 w-5 text-amber-500" />
-        <span className="font-bold text-[13px] tracking-wide">SANKAT SETU</span>
+        <span className="font-bold text-[13px] tracking-wide">SHARAN SETU</span>
       </div>
 
       <nav className="ml-6 flex items-center gap-0.5 text-[11px] font-medium">

@@ -19,7 +19,7 @@ export default function Header() {
       <div className="flex items-center gap-2">
         <ShieldAlert className="h-5 w-5 text-amber-500" />
         <div className="leading-tight">
-          <span className="font-bold text-[13px] tracking-wide text-white">SANKAT SETU</span>
+          <span className="font-bold text-[13px] tracking-wide text-white">SHARAN SETU</span>
         </div>
       </div>
 

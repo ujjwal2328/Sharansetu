@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "SANKAT SETU - Disaster Shelter & Evacuation Planning",
+  title: "SHARAN SETU - Disaster Shelter & Evacuation Planning",
   description: "GIS-based decision support for capacity-aware shelter allocation.",
 };
 

@@ -38,7 +38,7 @@ function generateData(startLevel: number, endLevel: number, points: number, nois
 export const mockSensorData: SensorLocation[] = [
   {
     id: 'sensor-1',
-    name: 'Pandri Nala',
+    name: 'Pandri',
     type: 'DRAIN',
     trend: 'INCREASING',
     currentLevel: 4.2,
@@ -48,7 +48,7 @@ export const mockSensorData: SensorLocation[] = [
   },
   {
     id: 'sensor-2',
-    name: 'Maharajbandh Talab',
+    name: 'Maharajbandh',
     type: 'LAKE',
     trend: 'DECREASING',
     currentLevel: 2.8,
@@ -58,7 +58,7 @@ export const mockSensorData: SensorLocation[] = [
   },
   {
     id: 'sensor-3',
-    name: 'Telibandha Lake',
+    name: 'Telibandha',
     type: 'LAKE',
     trend: 'STABLE',
     currentLevel: 3.5,

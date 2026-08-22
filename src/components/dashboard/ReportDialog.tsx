@@ -30,7 +30,7 @@ export default function ReportDialog() {
         <div className="p-6 bg-white space-y-6 text-slate-800" id="report-content">
           <div className="flex justify-between items-start border-b pb-4">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight">SHARAN SETU</h1>
+              <h1 className="text-2xl font-bold tracking-tight">SharanSetuX</h1>
               <p className="text-sm text-slate-500">Intelligent Disaster Shelter & Evacuation Planning</p>
             </div>
             <div className="text-right">

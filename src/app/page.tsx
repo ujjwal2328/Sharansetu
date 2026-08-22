@@ -1,69 +1,101 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useEffect, useCallback } from "react";
+import dynamic from "next/dynamic";
+import Header from "@/components/layout/Header";
+import AlertTicker from "@/components/dashboard/AlertTicker";
+import FloatingOpsPanel from "@/components/dashboard/FloatingOpsPanel";
+import FloatingIntelPanel from "@/components/dashboard/FloatingIntelPanel";
+import FloatingTimeline from "@/components/dashboard/FloatingTimeline";
+import BottomBar from "@/components/dashboard/BottomBar";
+import MapToolbar from "@/components/map/MapToolbar";
+import LayerManager from "@/components/map/LayerManager";
+import MapLegend from "@/components/map/MapLegend";
+import MapSearch from "@/components/map/MapSearch";
+import { Skeleton } from "@/components/ui/skeleton";
+
+import { usePlanningStore } from "@/lib/state/planningStore";
+import { mockPopulationZones, mockShelters, mockRoads } from "@/lib/services/mockData";
+import { generateEvacuationPlan } from "@/lib/services/evacuationEngine";
+
+const DynamicMap = dynamic(() => import("@/components/map/MapContent"), {
+  ssr: false,
+  loading: () => <Skeleton className="w-full h-full" />,
+});
+
+export default function Dashboard() {
+  const { scenarioState, planState, setPlanState, addTimelineEvent, timelineEvents } = usePlanningStore();
+
+  // Initialize baseline plan on mount
+  useEffect(() => {
+    if (planState.assignments.length === 0) {
+      const initialPlan = generateEvacuationPlan(scenarioState, mockPopulationZones, mockShelters, mockRoads);
+      setPlanState(initialPlan);
+
+      if (timelineEvents.length <= 1) {
+        addTimelineEvent({
+          type: 'SCENARIO_APPLIED',
+          message: 'Flood scenario activated — Severity: HIGH',
+          details: 'Raipur Urban Flood prototype scenario loaded.'
+        });
+        addTimelineEvent({
+          type: 'PLAN_RECALCULATED',
+          message: 'Baseline evacuation plan generated',
+          details: `${initialPlan.assignments.length} assignments computed across ${mockPopulationZones.length} zones.`
+        });
+        if (initialPlan.unassigned_population > 0) {
+          addTimelineEvent({
+            type: 'CAPACITY_SHORTFALL_DETECTED',
+            message: `${initialPlan.unassigned_population.toLocaleString()} people unassigned`,
+            details: 'Insufficient accessible shelter capacity for full coverage.'
+          });
+        }
+      }
+    }
+  }, []);
+
+  const handleMapSearch = useCallback((lat: number, lng: number, zoom?: number) => {
+    (window as any).__mapFlyTo?.(lat, lng, zoom);
+  }, []);
+
+  const handleZoomIn = useCallback(() => (window as any).__mapZoomIn?.(), []);
+  const handleZoomOut = useCallback(() => (window as any).__mapZoomOut?.(), []);
+  const handleLocate = useCallback(() => (window as any).__mapReset?.(), []);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="relative w-full h-screen overflow-hidden">
+      {/* FULL-VIEWPORT MAP CANVAS */}
+      <div className="absolute inset-0 z-0">
+        <DynamicMap />
+      </div>
+
+      {/* FLOATING OVERLAYS — all absolute/z-indexed over the map */}
+
+      {/* Top: Header + Alert Ticker */}
+      <Header />
+      <AlertTicker />
+
+      {/* Left: Operations Panel */}
+      <FloatingOpsPanel />
+
+      {/* Left: Map Toolbar */}
+      <MapToolbar onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} onLocate={handleLocate} />
+
+      {/* Left: Search */}
+      <MapSearch onSelect={handleMapSearch} />
+
+      {/* Right: Intelligence Panel */}
+      <FloatingIntelPanel />
+
+      {/* Bottom-left: Timeline */}
+      <FloatingTimeline />
+
+      {/* Bottom-right: Layer Manager + Legend */}
+      <LayerManager />
+      <MapLegend />
+
+      {/* Bottom: Status Bar */}
+      <BottomBar />
     </div>
   );
 }

@@ -20,6 +20,13 @@ export interface PopulationZone {
   priority_level: PriorityLevel;
 }
 
+export interface MedicalFacilities {
+  oxygen_tanks: number;
+  first_aid_kits: number;
+  nurses: number;
+  doctors: number;
+}
+
 export interface Shelter {
   id: string;
   name: string;
@@ -28,6 +35,7 @@ export interface Shelter {
   current_occupancy: number;
   available_capacity: number;
   facilities: string[];
+  medical: MedicalFacilities;
   status: ShelterStatus;
   accessibility_status: 'ACCESSIBLE' | 'PARTIALLY_ACCESSIBLE' | 'INACCESSIBLE';
 }

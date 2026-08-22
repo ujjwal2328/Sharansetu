@@ -21,7 +21,7 @@ export default function PlanDeltaStrip() {
   let unassignedChange = planState.unassigned_population - previousPlanState.unassigned_population;
   
   const beforeMap = new Map(previousPlanState.assignments.map(a => [a.zone_id, a]));
-  const changes = [];
+  const changes: Array<{ zone_id: string; before?: string | null; after?: string | null }> = [];
   
   planState.assignments.forEach(afterA => {
     const beforeA = beforeMap.get(afterA.zone_id);

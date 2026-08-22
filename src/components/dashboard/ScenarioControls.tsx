@@ -76,7 +76,7 @@ export default function ScenarioControls({
           <div className="space-y-2">
             <label className="text-xs font-medium">Block a Road</label>
             <div className="flex gap-2">
-              <Select onValueChange={onSimulateBlockRoad}>
+              <Select onValueChange={(val: any) => val && onSimulateBlockRoad(val)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select route to block" />
                 </SelectTrigger>
@@ -92,7 +92,7 @@ export default function ScenarioControls({
           <div className="space-y-2 pt-2">
             <label className="text-xs font-medium">Increase Shelter Occupancy</label>
             <div className="flex gap-2">
-              <Select onValueChange={onIncreaseShelterOccupancy}>
+              <Select onValueChange={(val: any) => val && onIncreaseShelterOccupancy(val)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select shelter" />
                 </SelectTrigger>

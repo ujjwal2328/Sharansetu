@@ -97,7 +97,7 @@ export default function SimulateDisruptionPanel() {
           </label>
           <Select 
             value={selectedRoadToBlock} 
-            onValueChange={setSelectedRoadToBlock}
+            onValueChange={(val: any) => setSelectedRoadToBlock(val || "")}
             disabled={!!draftPlanState}
           >
             <SelectTrigger className="bg-white">

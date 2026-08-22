@@ -272,11 +272,11 @@ export default function MapContent() {
                   </table>
                   <div style={{ marginBottom: '8px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', marginBottom: '2px' }}>
-                      <span style={{ color: '#64748b' }}>Occupancy</span>
-                      <span style={{ fontWeight: 800, color: loadPct >= 90 ? '#ef4444' : loadPct >= 70 ? '#f97316' : '#22c55e' }}>{loadPct}%</span>
+                      <span style={{ color: '#64748b' }}>Vacancy</span>
+                      <span style={{ fontWeight: 800, color: vacancyPct <= 10 ? '#ef4444' : vacancyPct <= 30 ? '#f97316' : '#22c55e' }}>{vacancyPct}%</span>
                     </div>
                     <div style={{ width: '100%', height: '6px', backgroundColor: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
-                      <div style={{ width: Math.min(loadPct, 100) + '%', height: '100%', borderRadius: '3px', backgroundColor: loadPct >= 90 ? '#ef4444' : loadPct >= 70 ? '#f97316' : loadPct >= 40 ? '#eab308' : '#22c55e' }} />
+                      <div style={{ width: Math.min(vacancyPct, 100) + '%', height: '100%', borderRadius: '3px', backgroundColor: vacancyPct <= 10 ? '#ef4444' : vacancyPct <= 30 ? '#f97316' : vacancyPct <= 60 ? '#eab308' : '#22c55e' }} />
                     </div>
                   </div>
                   <div style={{ background: '#f0fdf4', borderRadius: '4px', padding: '6px', border: '1px solid #dcfce7', marginBottom: '6px' }}>

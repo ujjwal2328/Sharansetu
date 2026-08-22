@@ -6,6 +6,7 @@ import Header from "@/components/layout/Header";
 import AlertTicker from "@/components/dashboard/AlertTicker";
 import FloatingOpsPanel from "@/components/dashboard/FloatingOpsPanel";
 import FloatingIntelPanel from "@/components/dashboard/FloatingIntelPanel";
+import FloatingConditionsPanel from "@/components/dashboard/FloatingConditionsPanel";
 import FloatingTimeline from "@/components/dashboard/FloatingTimeline";
 import BottomBar from "@/components/dashboard/BottomBar";
 import MapToolbar from "@/components/map/MapToolbar";
@@ -86,6 +87,7 @@ export default function Dashboard() {
 
       {/* Right: Intelligence Panel */}
       <FloatingIntelPanel />
+      <FloatingConditionsPanel />
 
       {/* Bottom-left: Timeline */}
       <FloatingTimeline />

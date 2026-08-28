@@ -6,7 +6,8 @@ import { usePathname } from "next/navigation";
 import { usePlanningStore } from "@/lib/state/planningStore";
 
 const navLinks = [
-  { href: "/", label: "Situation" },
+  { href: "/", label: "Dashboard" },
+  { href: "/conditions", label: "Conditions" },
   { href: "/shelters", label: "Shelters" },
   { href: "/population", label: "Population" },
   { href: "/reports", label: "Reports" },

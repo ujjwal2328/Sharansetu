@@ -124,9 +124,10 @@ interface MapContentProps {
     floodZones?: boolean;
   };
   highlightShelters?: boolean;
+  highlightFloodZones?: boolean;
 }
 
-export default function MapContent({ forcedLayers, highlightShelters = false }: MapContentProps) {
+export default function MapContent({ forcedLayers, highlightShelters = false, highlightFloodZones = false }: MapContentProps) {
   const store = usePlanningStore();
   const mapLayers = forcedLayers ? { ...store.mapLayers, ...forcedLayers } : store.mapLayers;
   const { planState, scenarioState, draftPlanDelta, basemap } = store;
@@ -297,28 +298,30 @@ export default function MapContent({ forcedLayers, highlightShelters = false }: 
           if (zone.severity === 'HIGH') borderColor = '#f97316';
           
           return (
-            <Polygon 
-              key={zone.id} 
-              positions={zone.polygon}
-              pathOptions={{ 
-                fillColor: `url(#flood-${zone.severity})`, 
-                fillOpacity: 0.9, 
-                color: borderColor, 
-                weight: 2,
-                dashArray: '6,4'
-              }}
-            >
-              <Popup maxWidth={260}>
-                <div style={{ fontSize: '11px' }}>
-                  <div style={{ fontWeight: 800, color: borderColor, fontSize: '13px', textTransform: 'uppercase', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span style={{ fontSize: '16px' }}>🌊</span> Flood Zone: {zone.severity}
+            <LayerGroup key={zone.id}>
+              <Polygon 
+                positions={zone.polygon}
+                pathOptions={{ 
+                  fillColor: `url(#flood-${zone.severity})`, 
+                  fillOpacity: 0.9, 
+                  color: borderColor, 
+                  weight: highlightFloodZones ? 4 : 2,
+                  dashArray: '6,4',
+                  className: highlightFloodZones ? 'drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]' : ''
+                }}
+              >
+                <Popup maxWidth={260}>
+                  <div style={{ fontSize: '11px' }}>
+                    <div style={{ fontWeight: 800, color: borderColor, fontSize: '13px', textTransform: 'uppercase', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span style={{ fontSize: '16px' }}>🌊</span> Flood Zone: {zone.severity}
+                    </div>
+                    <div style={{ fontWeight: 700, color: '#1e293b', fontSize: '12px', marginBottom: '4px' }}>{zone.name}</div>
+                    <div style={{ color: '#64748b' }}>Water Level: <span style={{ fontWeight: 700, color: '#334155' }}>{zone.waterLevel}</span></div>
+                    <div style={{ marginTop: '6px', fontSize: '10px', color: '#64748b' }}>This area is currently experiencing severe waterlogging. Travel is highly dangerous.</div>
                   </div>
-                  <div style={{ fontWeight: 700, color: '#1e293b', fontSize: '12px', marginBottom: '4px' }}>{zone.name}</div>
-                  <div style={{ color: '#64748b' }}>Water Level: <span style={{ fontWeight: 700, color: '#334155' }}>{zone.waterLevel}</span></div>
-                  <div style={{ marginTop: '6px', fontSize: '10px', color: '#64748b' }}>This area is currently experiencing severe waterlogging. Travel is highly dangerous.</div>
-                </div>
-              </Popup>
-            </Polygon>
+                </Popup>
+              </Polygon>
+            </LayerGroup>
           );
         })}
 

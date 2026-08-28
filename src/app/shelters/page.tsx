@@ -34,10 +34,10 @@ function getLoadBarColor(load: number) {
   return "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]";
 }
 
-function getVacancyTextColor(vacancy: number) {
-  if (vacancy <= 5) return "text-red-400";
-  if (vacancy <= 20) return "text-orange-400";
-  if (vacancy <= 40) return "text-amber-400";
+function getLoadTextColor(load: number) {
+  if (load >= 95) return "text-red-400";
+  if (load >= 80) return "text-orange-400";
+  if (load >= 60) return "text-amber-400";
   return "text-emerald-400";
 }
 
@@ -69,7 +69,6 @@ export default function SheltersPage() {
     const incomingPopulation = assignedZones.reduce((sum, z) => sum + z.population, 0);
     const projectedOccupancy = s.current_occupancy + incomingPopulation;
     const projectedLoad = s.total_capacity > 0 ? Math.round((projectedOccupancy / s.total_capacity) * 100) : 0;
-    const projectedVacancy = Math.max(0, 100 - projectedLoad);
     const status = getStatusLabel(projectedLoad, s.accessibility_status);
 
     return {
@@ -77,7 +76,6 @@ export default function SheltersPage() {
       incomingPopulation,
       projectedOccupancy,
       projectedLoad,
-      projectedVacancy,
       statusInfo: status,
       assignedZones,
     };
@@ -161,7 +159,7 @@ export default function SheltersPage() {
             onChange={(e) => setSortBy(e.target.value as any)}
             className="text-sm border border-slate-700 rounded-md px-2 py-1.5 bg-slate-800/50 text-slate-300 focus:outline-none focus:ring-1 focus:ring-emerald-500/50"
           >
-            <option value="load">Sort: Lowest Vacancy</option>
+            <option value="load">Sort: Projected Load ↓</option>
             <option value="name">Sort: Name A-Z</option>
           </select>
         </div>
@@ -175,7 +173,7 @@ export default function SheltersPage() {
               <div className="w-[15%] text-right pr-2">Capacity</div>
               <div className="w-[15%] text-right pr-2">Incoming</div>
               <div className="w-[18%] text-center px-1">Status</div>
-              <div className="w-[12%] text-right pr-2">Vacancy</div>
+              <div className="w-[12%] text-right pr-2">Load %</div>
               <div className="w-[5%]"></div>
             </div>
             
@@ -210,7 +208,7 @@ export default function SheltersPage() {
                         </span>
                       </div>
                       <div className="w-[12%] text-right pr-2 font-mono font-bold text-xs truncate">
-                        <span className={getVacancyTextColor(shelter.projectedVacancy)}>{shelter.projectedVacancy}%</span>
+                        <span className={getLoadTextColor(shelter.projectedLoad)}>{shelter.projectedLoad}%</span>
                       </div>
                       <div className="w-[5%] flex justify-center text-slate-500">
                         {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}

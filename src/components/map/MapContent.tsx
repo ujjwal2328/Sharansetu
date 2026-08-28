@@ -23,20 +23,20 @@ const TILE_ATTRIBUTIONS = {
   dark: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 };
 
-// Shelter icon — color by vacancy (green=available, red=full)
-const createShelterIcon = (shelter: typeof mockShelters[0], isHighlighted: boolean = false, projectedVacancyPct?: number) => {
-  const vacancyPct = projectedVacancyPct !== undefined 
-    ? projectedVacancyPct 
-    : Math.round((shelter.available_capacity / shelter.total_capacity) * 100);
+// Shelter icon — color by load
+const createShelterIcon = (shelter: typeof mockShelters[0], isHighlighted: boolean = false, projectedLoadPct?: number) => {
+  const loadPct = projectedLoadPct !== undefined 
+    ? projectedLoadPct 
+    : Math.round((shelter.current_occupancy / shelter.total_capacity) * 100);
     
   let color: string;
-  if (vacancyPct <= 0) color = '#ef4444';       // FULL (Load >= 100)
-  else if (vacancyPct <= 5) color = '#f97316';  // CRITICAL (Load >= 95)
-  else if (vacancyPct <= 20) color = '#f59e0b'; // NEAR CAP (Load >= 80)
-  else if (vacancyPct <= 40) color = '#eab308'; // MODERATE (Load >= 60)
+  if (loadPct >= 100) color = '#ef4444';       // FULL (Load >= 100)
+  else if (loadPct >= 95) color = '#f97316';  // CRITICAL (Load >= 95)
+  else if (loadPct >= 80) color = '#f59e0b'; // NEAR CAP (Load >= 80)
+  else if (loadPct >= 60) color = '#eab308'; // MODERATE (Load >= 60)
   else color = '#10b981';                       // AVAILABLE (Load < 60)
 
-  const label = vacancyPct <= 0 ? 'FULL' : `${vacancyPct}%`;
+  const label = loadPct >= 100 ? 'FULL' : `${loadPct}%`;
   const size = isHighlighted ? 44 : 28;
   const pulseStyle = isHighlighted 
     ? `position:absolute; width:48px; height:48px; left:-2px; top:-2px; border-radius:50%; background:rgba(34, 197, 94, 0.3); animation: pulse-ring 1.5s ease-out infinite; z-index: -1;` 
@@ -295,17 +295,17 @@ export default function MapContent({ forcedLayers, highlightShelters = false }: 
 
         {/* SHELTERS (vacancy-colored) */}
         {mapLayers.shelters && mockShelters.map((shelter) => {
-          const vacancyPct = Math.round((shelter.available_capacity / shelter.total_capacity) * 100);
+          const loadPct = Math.round((shelter.current_occupancy / shelter.total_capacity) * 100);
           const incoming = assignments.filter(a => a.shelter_id === shelter.id).reduce((s, a) => s + a.assigned_population, 0);
           
-          // Calculate projected vacancy after arrivals
-          const projectedVacantBeds = Math.max(0, shelter.available_capacity - incoming);
-          const projectedVacancyPct = Math.round((projectedVacantBeds / shelter.total_capacity) * 100);
+          // Calculate projected load after arrivals
+          const projectedOccupancy = shelter.current_occupancy + incoming;
+          const projectedLoadPct = Math.round((projectedOccupancy / shelter.total_capacity) * 100);
           
           const assignedZones = assignments.filter(a => a.shelter_id === shelter.id).map(a => mockPopulationZones.find(z => z.id === a.zone_id)?.name).filter(Boolean);
 
           return (
-            <Marker key={shelter.id} position={[shelter.location.lat, shelter.location.lng]} icon={createShelterIcon(shelter, highlightShelters, projectedVacancyPct)}>
+            <Marker key={shelter.id} position={[shelter.location.lat, shelter.location.lng]} icon={createShelterIcon(shelter, highlightShelters, projectedLoadPct)}>
               <Popup maxWidth={300}>
                 <div style={{ fontSize: '11px', lineHeight: '1.4', minWidth: '240px' }}>
                   <div style={{ fontWeight: 700, fontSize: '13px', borderBottom: '1px solid #e2e8f0', paddingBottom: '4px', marginBottom: '6px' }}>{shelter.name}</div>
@@ -319,20 +319,20 @@ export default function MapContent({ forcedLayers, highlightShelters = false }: 
                   </table>
                   <div style={{ marginBottom: '8px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', marginBottom: '2px' }}>
-                      <span style={{ color: '#64748b' }}>Current Vacancy</span>
-                      <span style={{ fontWeight: 800, color: vacancyPct <= 0 ? '#ef4444' : vacancyPct <= 5 ? '#f97316' : vacancyPct <= 20 ? '#f59e0b' : vacancyPct <= 40 ? '#eab308' : '#10b981' }}>{vacancyPct}%</span>
+                      <span style={{ color: '#64748b' }}>Current Load</span>
+                      <span style={{ fontWeight: 800, color: loadPct >= 100 ? '#ef4444' : loadPct >= 95 ? '#f97316' : loadPct >= 80 ? '#f59e0b' : loadPct >= 60 ? '#eab308' : '#10b981' }}>{loadPct}%</span>
                     </div>
                     <div style={{ width: '100%', height: '6px', backgroundColor: '#e2e8f0', borderRadius: '3px', overflow: 'hidden', marginBottom: '4px' }}>
-                      <div style={{ width: Math.min(vacancyPct, 100) + '%', height: '100%', borderRadius: '3px', backgroundColor: vacancyPct <= 0 ? '#ef4444' : vacancyPct <= 5 ? '#f97316' : vacancyPct <= 20 ? '#f59e0b' : vacancyPct <= 40 ? '#eab308' : '#10b981' }} />
+                      <div style={{ width: Math.min(loadPct, 100) + '%', height: '100%', borderRadius: '3px', backgroundColor: loadPct >= 100 ? '#ef4444' : loadPct >= 95 ? '#f97316' : loadPct >= 80 ? '#f59e0b' : loadPct >= 60 ? '#eab308' : '#10b981' }} />
                     </div>
                     
-                    {/* Projected Vacancy Bar */}
+                    {/* Projected Load Bar */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', marginBottom: '2px' }}>
-                      <span style={{ color: '#64748b' }}>Projected Vacancy (after arrivals)</span>
-                      <span style={{ fontWeight: 800, color: projectedVacancyPct <= 0 ? '#ef4444' : projectedVacancyPct <= 5 ? '#f97316' : projectedVacancyPct <= 20 ? '#f59e0b' : projectedVacancyPct <= 40 ? '#eab308' : '#10b981' }}>{projectedVacancyPct}%</span>
+                      <span style={{ color: '#64748b' }}>Projected Load (after arrivals)</span>
+                      <span style={{ fontWeight: 800, color: projectedLoadPct >= 100 ? '#ef4444' : projectedLoadPct >= 95 ? '#f97316' : projectedLoadPct >= 80 ? '#f59e0b' : projectedLoadPct >= 60 ? '#eab308' : '#10b981' }}>{projectedLoadPct}%</span>
                     </div>
                     <div style={{ width: '100%', height: '6px', backgroundColor: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
-                      <div style={{ width: Math.min(projectedVacancyPct, 100) + '%', height: '100%', borderRadius: '3px', backgroundColor: projectedVacancyPct <= 0 ? '#ef4444' : projectedVacancyPct <= 5 ? '#f97316' : projectedVacancyPct <= 20 ? '#f59e0b' : projectedVacancyPct <= 40 ? '#eab308' : '#10b981' }} />
+                      <div style={{ width: Math.min(projectedLoadPct, 100) + '%', height: '100%', borderRadius: '3px', backgroundColor: projectedLoadPct >= 100 ? '#ef4444' : projectedLoadPct >= 95 ? '#f97316' : projectedLoadPct >= 80 ? '#f59e0b' : projectedLoadPct >= 60 ? '#eab308' : '#10b981' }} />
                     </div>
                   </div>
                   <div style={{ background: '#f0fdf4', borderRadius: '4px', padding: '6px', border: '1px solid #dcfce7', marginBottom: '6px' }}>

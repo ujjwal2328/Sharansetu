@@ -24,8 +24,11 @@ const TILE_ATTRIBUTIONS = {
 };
 
 // Shelter icon — color by vacancy (green=available, red=full)
-const createShelterIcon = (shelter: typeof mockShelters[0], isHighlighted: boolean = false) => {
-  const vacancyPct = Math.round((shelter.available_capacity / shelter.total_capacity) * 100);
+const createShelterIcon = (shelter: typeof mockShelters[0], isHighlighted: boolean = false, projectedVacancyPct?: number) => {
+  const vacancyPct = projectedVacancyPct !== undefined 
+    ? projectedVacancyPct 
+    : Math.round((shelter.available_capacity / shelter.total_capacity) * 100);
+    
   let color: string;
   if (vacancyPct <= 0) color = '#dc2626';
   else if (vacancyPct <= 10) color = '#ef4444';
@@ -302,7 +305,7 @@ export default function MapContent({ forcedLayers, highlightShelters = false }: 
           const assignedZones = assignments.filter(a => a.shelter_id === shelter.id).map(a => mockPopulationZones.find(z => z.id === a.zone_id)?.name).filter(Boolean);
 
           return (
-            <Marker key={shelter.id} position={[shelter.location.lat, shelter.location.lng]} icon={createShelterIcon(shelter, highlightShelters)}>
+            <Marker key={shelter.id} position={[shelter.location.lat, shelter.location.lng]} icon={createShelterIcon(shelter, highlightShelters, projectedVacancyPct)}>
               <Popup maxWidth={300}>
                 <div style={{ fontSize: '11px', lineHeight: '1.4', minWidth: '240px' }}>
                   <div style={{ fontWeight: 700, fontSize: '13px', borderBottom: '1px solid #e2e8f0', paddingBottom: '4px', marginBottom: '6px' }}>{shelter.name}</div>

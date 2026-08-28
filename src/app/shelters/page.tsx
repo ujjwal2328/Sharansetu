@@ -5,6 +5,8 @@ import { usePlanningStore } from "@/lib/state/planningStore";
 import { mockPopulationZones, mockShelters } from "@/lib/services/mockData";
 import { Search, ChevronDown, ChevronUp, MapPin, Users, Droplets, Zap, Heart, Wifi } from "lucide-react";
 
+import MapWrapper from "@/components/map/MapWrapper";
+
 const facilityIcons: Record<string, any> = {
   Medical: Heart,
   Food: Droplets,
@@ -79,61 +81,65 @@ export default function SheltersPage() {
   return (
     <div className="w-full h-[calc(100vh-56px)] flex flex-col overflow-hidden bg-slate-50">
       {/* Page Header */}
-      <div className="bg-white border-b px-6 py-4 shrink-0">
+      <div className="bg-white border-b px-6 py-4 shrink-0 shadow-sm z-20 relative">
         <h1 className="text-lg font-bold text-slate-800">Shelter Operations</h1>
         <p className="text-xs text-slate-500 mt-0.5">
           {mockShelters.length} shelters · Total capacity {mockShelters.reduce((s, sh) => s + sh.total_capacity, 0).toLocaleString()} · Projected loads derived from current evacuation assignments
         </p>
       </div>
 
-      {/* Controls */}
-      <div className="bg-white border-b px-6 py-3 flex items-center gap-3 shrink-0 flex-wrap">
-        <div className="relative flex-1 min-w-[200px] max-w-sm">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search shelters..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-8 pr-3 py-2 text-sm border rounded-md bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
-          />
-        </div>
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left Side: Controls & Table */}
+        <div className="w-[60%] flex flex-col border-r border-slate-200 bg-white overflow-hidden shadow-xl z-10 relative">
+          
+          {/* Controls */}
+          <div className="bg-slate-50/80 backdrop-blur border-b px-6 py-3 flex items-center gap-3 shrink-0 flex-wrap">
+            <div className="relative flex-1 min-w-[200px] max-w-sm">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search shelters..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-8 pr-3 py-2 text-sm border rounded-md bg-white focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-sm"
+              />
+            </div>
 
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="text-sm border rounded-md px-3 py-2 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
-        >
-          {statusOptions.map((opt) => (
-            <option key={opt} value={opt}>{opt === "ALL" ? "All Statuses" : opt}</option>
-          ))}
-        </select>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="text-sm border rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 shadow-sm"
+            >
+              {statusOptions.map((opt) => (
+                <option key={opt} value={opt}>{opt === "ALL" ? "All Statuses" : opt}</option>
+              ))}
+            </select>
 
-        <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value as any)}
-          className="text-sm border rounded-md px-3 py-2 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
-        >
-          <option value="load">Sort: Projected Load ↓</option>
-          <option value="name">Sort: Name A-Z</option>
-        </select>
-      </div>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="text-sm border rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 shadow-sm"
+            >
+              <option value="load">Sort: Projected Load ↓</option>
+              <option value="name">Sort: Name A-Z</option>
+            </select>
+          </div>
 
-      {/* Table */}
-      <div className="flex-1 overflow-auto px-6 py-4">
-        <table className="w-full text-sm border-collapse">
-          <thead className="sticky top-0 z-10">
-            <tr className="bg-slate-100 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-              <th className="p-3 border-b">Shelter</th>
-              <th className="p-3 border-b text-right">Total Capacity</th>
-              <th className="p-3 border-b text-right">Current</th>
-              <th className="p-3 border-b text-right">Incoming</th>
-              <th className="p-3 border-b text-right">Projected</th>
-              <th className="p-3 border-b w-[160px]">Projected Load</th>
-              <th className="p-3 border-b">Status</th>
-              <th className="p-3 border-b text-center w-8"></th>
-            </tr>
-          </thead>
+          {/* Table */}
+          <div className="flex-1 overflow-auto">
+            <table className="w-full text-sm border-collapse">
+              <thead className="sticky top-0 z-10">
+                <tr className="bg-slate-100/95 backdrop-blur shadow-sm text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  <th className="px-6 py-3 border-b">Shelter</th>
+                  <th className="px-4 py-3 border-b text-right">Total Capacity</th>
+                  <th className="px-4 py-3 border-b text-right">Current</th>
+                  <th className="px-4 py-3 border-b text-right">Incoming</th>
+                  <th className="px-4 py-3 border-b text-right">Projected</th>
+                  <th className="px-4 py-3 border-b w-[140px]">Projected Load</th>
+                  <th className="px-4 py-3 border-b">Status</th>
+                  <th className="px-4 py-3 border-b text-center w-8"></th>
+                </tr>
+              </thead>
           <tbody>
             {filtered.map((shelter) => {
               const isExpanded = expandedId === shelter.id;
@@ -243,6 +249,21 @@ export default function SheltersPage() {
             })}
           </tbody>
         </table>
+          </div>
+        </div>
+
+        {/* Right Side: Map */}
+        <div className="w-[40%] bg-slate-100 relative z-0 h-full">
+          <MapWrapper 
+            forcedLayers={{
+              shelters: true,
+              population: false,
+              routes: false,
+              blockedRoads: false,
+              riskZones: false
+            }}
+          />
+        </div>
       </div>
     </div>
   );

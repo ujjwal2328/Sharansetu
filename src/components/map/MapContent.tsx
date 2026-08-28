@@ -105,8 +105,20 @@ interface DemoRouteData {
   safe: [number, number][] | null;
 }
 
-export default function MapContent() {
-  const { planState, scenarioState, draftPlanDelta, mapLayers, basemap } = usePlanningStore();
+interface MapContentProps {
+  forcedLayers?: {
+    population?: boolean;
+    shelters?: boolean;
+    routes?: boolean;
+    blockedRoads?: boolean;
+    riskZones?: boolean;
+  };
+}
+
+export default function MapContent({ forcedLayers }: MapContentProps = {}) {
+  const store = usePlanningStore();
+  const mapLayers = forcedLayers ? { ...store.mapLayers, ...forcedLayers } : store.mapLayers;
+  const { planState, scenarioState, draftPlanDelta, basemap } = store;
   const { assignments } = planState;
   const mapRef = useRef<L.Map | null>(null);
   const center: [number, number] = [21.2514, 81.6296];

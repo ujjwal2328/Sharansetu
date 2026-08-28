@@ -9,12 +9,15 @@ const DynamicMap = dynamic(() => import("./MapContent"), {
 });
 
 interface MapWrapperProps {
-  zones?: any;
-  shelters?: any;
-  roads?: any;
-  assignments?: any;
+  forcedLayers?: {
+    population?: boolean;
+    shelters?: boolean;
+    routes?: boolean;
+    blockedRoads?: boolean;
+    riskZones?: boolean;
+  };
 }
 
-export default function MapWrapper(_props: MapWrapperProps) {
-  return <DynamicMap />;
+export default function MapWrapper(props: MapWrapperProps) {
+  return <DynamicMap forcedLayers={props.forcedLayers} />;
 }

@@ -35,6 +35,13 @@ function getLoadBarColor(load: number) {
   return "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]";
 }
 
+function getLoadTextColor(load: number) {
+  if (load >= 95) return "text-red-400";
+  if (load >= 80) return "text-orange-400";
+  if (load >= 60) return "text-amber-400";
+  return "text-emerald-400";
+}
+
 export default function SheltersPage() {
   const { planState } = usePlanningStore();
   const [search, setSearch] = useState("");
@@ -108,8 +115,8 @@ export default function SheltersPage() {
       {/* TOP HEADER */}
       <Header />
 
-      {/* FLOATING SHELTER DATA PANEL (Replaces the split screen) */}
-      <div className="absolute top-[80px] left-4 bottom-[36px] w-[650px] z-30 flex flex-col bg-slate-900/85 backdrop-blur-xl rounded-xl border border-slate-700/60 shadow-[0_0_40px_rgba(0,0,0,0.5)] overflow-hidden animate-in fade-in slide-in-from-left-8 duration-500">
+      {/* FLOATING SHELTER DATA PANEL */}
+      <div className="absolute top-[80px] left-4 bottom-[36px] w-[500px] z-30 flex flex-col bg-slate-900/85 backdrop-blur-xl rounded-xl border border-slate-700/60 shadow-[0_0_40px_rgba(0,0,0,0.5)] overflow-hidden animate-in fade-in slide-in-from-left-8 duration-500">
         
         {/* Panel Header */}
         <div className="px-5 py-4 border-b border-slate-700/50 bg-slate-800/40 shrink-0 flex items-center justify-between">
@@ -159,15 +166,15 @@ export default function SheltersPage() {
 
         {/* Data Table */}
         <div className="flex-1 overflow-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
-          <table className="w-full text-sm border-collapse text-slate-300">
+          <table className="w-full text-sm border-collapse text-slate-300 table-fixed">
             <thead className="sticky top-0 z-10 bg-slate-900/95 backdrop-blur-sm shadow-md">
               <tr className="text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-700">
-                <th className="px-5 py-3">Shelter Facility</th>
-                <th className="px-3 py-3 text-right">Capacity</th>
-                <th className="px-3 py-3 text-right">Incoming</th>
-                <th className="px-3 py-3 w-[120px]">Load %</th>
-                <th className="px-3 py-3 text-center">Status</th>
-                <th className="px-3 py-3 text-center w-8"></th>
+                <th className="px-4 py-3 w-[38%]">Shelter Facility</th>
+                <th className="px-2 py-3 w-[15%] text-right">Capacity</th>
+                <th className="px-2 py-3 w-[15%] text-right">Incoming</th>
+                <th className="px-2 py-3 w-[15%] text-center">Status</th>
+                <th className="px-2 py-3 w-[12%] text-right">Load %</th>
+                <th className="px-2 py-3 w-[5%] text-center"></th>
               </tr>
             </thead>
             <tbody>
@@ -179,33 +186,25 @@ export default function SheltersPage() {
                       className={`border-b border-slate-700/50 cursor-pointer transition-all duration-200 hover:bg-slate-800/50 ${isExpanded ? "bg-slate-800/70" : "bg-transparent"}`}
                       onClick={() => setExpandedId(isExpanded ? null : shelter.id)}
                     >
-                      <td className="px-5 py-4">
-                        <div className="font-medium text-slate-200">{shelter.name}</div>
-                        <div className="text-[11px] text-slate-500 flex items-center gap-1 mt-1">
-                          <MapPin className="h-3 w-3" />
+                      <td className="px-4 py-4 truncate">
+                        <div className="font-medium text-slate-200 truncate">{shelter.name}</div>
+                        <div className="text-[11px] text-slate-500 flex items-center gap-1 mt-1 truncate">
+                          <MapPin className="h-3 w-3 shrink-0" />
                           {shelter.location.lat.toFixed(4)}, {shelter.location.lng.toFixed(4)}
                         </div>
                       </td>
-                      <td className="px-3 py-4 text-right font-mono text-slate-400">{shelter.total_capacity.toLocaleString()}</td>
-                      <td className="px-3 py-4 text-right font-mono text-emerald-400 font-semibold">+{shelter.incomingPopulation.toLocaleString()}</td>
-                      <td className="px-3 py-4">
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 h-1.5 bg-slate-700/50 rounded-full overflow-hidden">
-                            <div
-                              className={`h-full rounded-full transition-all duration-1000 ${getLoadBarColor(shelter.projectedLoad)}`}
-                              style={{ width: `${Math.min(shelter.projectedLoad, 100)}%` }}
-                            />
-                          </div>
-                          <span className="text-[11px] font-mono font-bold text-slate-300 w-8 text-right">{shelter.projectedLoad}%</span>
-                        </div>
-                      </td>
-                      <td className="px-3 py-4 text-center">
-                        <span className={`text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${shelter.statusInfo.color}`}>
+                      <td className="px-2 py-4 text-right font-mono text-slate-400 truncate">{shelter.total_capacity.toLocaleString()}</td>
+                      <td className="px-2 py-4 text-right font-mono text-emerald-400 font-semibold truncate">+{shelter.incomingPopulation.toLocaleString()}</td>
+                      <td className="px-2 py-4 text-center">
+                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider whitespace-nowrap ${shelter.statusInfo.color}`}>
                           {shelter.statusInfo.label}
                         </span>
                       </td>
-                      <td className="px-3 py-4 text-center text-slate-500">
-                        {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                      <td className="px-2 py-4 text-right">
+                        <span className={`text-[11px] font-mono font-bold w-full inline-block ${getLoadTextColor(shelter.projectedLoad)}`}>{shelter.projectedLoad}%</span>
+                      </td>
+                      <td className="px-2 py-4 text-center text-slate-500">
+                        {isExpanded ? <ChevronUp className="h-4 w-4 mx-auto" /> : <ChevronDown className="h-4 w-4 mx-auto" />}
                       </td>
                     </tr>
 

@@ -14,9 +14,10 @@ interface SearchResult {
 
 interface MapSearchProps {
   onSelect: (lat: number, lng: number, zoom?: number) => void;
+  className?: string;
 }
 
-export default function MapSearch({ onSelect }: MapSearchProps) {
+export default function MapSearch({ onSelect, className }: MapSearchProps) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -44,7 +45,7 @@ export default function MapSearch({ onSelect }: MapSearchProps) {
   const typeColors = { zone: 'text-blue-600', shelter: 'text-emerald-600', road: 'text-slate-600' };
 
   return (
-    <div className="absolute top-[96px] left-[336px] z-30">
+    <div className={className || "absolute top-[96px] left-[336px] z-30"}>
       <div className="relative">
         <div className="flex items-center bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-slate-200 overflow-hidden">
           <Search className="h-3.5 w-3.5 text-slate-400 ml-2.5 shrink-0" />

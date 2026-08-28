@@ -102,6 +102,7 @@ export default function SheltersPage() {
       {/* FULL-VIEWPORT MAP CANVAS */}
       <div className="absolute inset-0 z-0">
         <DynamicMap 
+          highlightShelters={true}
           forcedLayers={{
             shelters: true,
             population: false,
@@ -264,9 +265,9 @@ export default function SheltersPage() {
         </div>
       </div>
 
-      {/* FLOATING MAP CONTROLS (Identical to Dashboard) */}
+      {/* FLOATING MAP CONTROLS */}
       <MapToolbar onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} onLocate={handleLocate} />
-      <MapSearch onSelect={handleMapSearch} />
+      <MapSearch onSelect={handleMapSearch} className="absolute top-[96px] left-[452px] z-30" />
       <LayerManager />
       <MapLegend />
       <BottomBar />

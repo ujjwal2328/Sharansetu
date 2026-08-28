@@ -24,7 +24,7 @@ const TILE_ATTRIBUTIONS = {
 };
 
 // Shelter icon — color by vacancy (green=available, red=full)
-const createShelterIcon = (shelter: typeof mockShelters[0]) => {
+const createShelterIcon = (shelter: typeof mockShelters[0], isHighlighted: boolean = false) => {
   const vacancyPct = Math.round((shelter.available_capacity / shelter.total_capacity) * 100);
   let color: string;
   if (vacancyPct <= 0) color = '#dc2626';
@@ -34,17 +34,23 @@ const createShelterIcon = (shelter: typeof mockShelters[0]) => {
   else color = '#22c55e';
 
   const label = vacancyPct <= 0 ? 'FULL' : `${vacancyPct}%`;
+  const size = isHighlighted ? 44 : 28;
+  const pulseStyle = isHighlighted 
+    ? `position:absolute; width:48px; height:48px; left:-2px; top:-2px; border-radius:50%; background:rgba(34, 197, 94, 0.3); animation: pulse-ring 1.5s ease-out infinite; z-index: -1;` 
+    : 'display:none;';
 
   return L.divIcon({
     className: 'custom-div-icon',
     html: `<div style="position:relative; display:flex; flex-direction:column; align-items:center;">
-      <div style="background-color: ${color}; width: 28px; height: 28px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-4h6v4"/></svg>
+      <div style="${pulseStyle}"></div>
+      <div style="background-color: ${color}; width: ${size}px; height: ${size}px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; transition: all 0.3s ease;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="${isHighlighted ? 20 : 13}" height="${isHighlighted ? 20 : 13}" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-4h6v4"/></svg>
       </div>
-      <div style="font-size:9px; font-weight:800; color:${color}; text-shadow: 0 0 3px white, 0 0 3px white, 0 0 3px white; margin-top:1px; font-family:monospace;">${label}</div>
-    </div>`,
-    iconSize: [32, 38],
-    iconAnchor: [16, 19]
+      <div style="font-size:${isHighlighted ? 12 : 9}px; font-weight:800; color:${color}; text-shadow: 0 0 3px white, 0 0 3px white, 0 0 3px white; margin-top:1px; font-family:monospace; transition: all 0.3s ease;">${label}</div>
+    </div>
+    <style>@keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.6); opacity: 0; } }</style>`,
+    iconSize: [48, 54],
+    iconAnchor: [24, 27]
   });
 };
 
@@ -106,16 +112,11 @@ interface DemoRouteData {
 }
 
 interface MapContentProps {
-  forcedLayers?: {
-    population?: boolean;
-    shelters?: boolean;
-    routes?: boolean;
-    blockedRoads?: boolean;
-    riskZones?: boolean;
-  };
+  forcedLayers?: Partial<import('@/lib/state/planningStore').MapLayers>;
+  highlightShelters?: boolean;
 }
 
-export default function MapContent({ forcedLayers }: MapContentProps = {}) {
+export default function MapContent({ forcedLayers, highlightShelters = false }: MapContentProps) {
   const store = usePlanningStore();
   const mapLayers = forcedLayers ? { ...store.mapLayers, ...forcedLayers } : store.mapLayers;
   const { planState, scenarioState, draftPlanDelta, basemap } = store;
@@ -295,7 +296,7 @@ export default function MapContent({ forcedLayers }: MapContentProps = {}) {
           const assignedZones = assignments.filter(a => a.shelter_id === shelter.id).map(a => mockPopulationZones.find(z => z.id === a.zone_id)?.name).filter(Boolean);
 
           return (
-            <Marker key={shelter.id} position={[shelter.location.lat, shelter.location.lng]} icon={createShelterIcon(shelter)}>
+            <Marker key={shelter.id} position={[shelter.location.lat, shelter.location.lng]} icon={createShelterIcon(shelter, highlightShelters)}>
               <Popup maxWidth={300}>
                 <div style={{ fontSize: '11px', lineHeight: '1.4', minWidth: '240px' }}>
                   <div style={{ fontWeight: 700, fontSize: '13px', borderBottom: '1px solid #e2e8f0', paddingBottom: '4px', marginBottom: '6px' }}>{shelter.name}</div>
@@ -403,7 +404,7 @@ export default function MapContent({ forcedLayers }: MapContentProps = {}) {
         }
 
         {/* DEMO: Unsafe (Red) vs Safe (Green) Route — real OSRM roads */}
-        {demoRoutesData.unsafe && (
+        {mapLayers.routes && demoRoutesData.unsafe && (
           <Polyline positions={demoRoutesData.unsafe} pathOptions={{ color: '#ef4444', weight: 5, dashArray: '10,6', opacity: 0.85 }}>
             <Popup maxWidth={260}>
               <div style={{ fontSize: '11px' }}>
@@ -414,7 +415,7 @@ export default function MapContent({ forcedLayers }: MapContentProps = {}) {
             </Popup>
           </Polyline>
         )}
-        {demoRoutesData.safe && (
+        {mapLayers.routes && demoRoutesData.safe && (
           <Polyline positions={demoRoutesData.safe} pathOptions={{ color: '#22c55e', weight: 5, opacity: 0.9 }}>
             <Popup maxWidth={260}>
               <div style={{ fontSize: '11px' }}>

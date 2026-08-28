@@ -11,7 +11,6 @@ import Header from "@/components/layout/Header";
 import MapToolbar from "@/components/map/MapToolbar";
 import LayerManager from "@/components/map/LayerManager";
 import MapLegend from "@/components/map/MapLegend";
-import MapSearch from "@/components/map/MapSearch";
 import BottomBar from "@/components/dashboard/BottomBar";
 
 const DynamicMap = dynamic(() => import("@/components/map/MapContent"), {
@@ -267,7 +266,6 @@ export default function SheltersPage() {
 
       {/* FLOATING MAP CONTROLS */}
       <MapToolbar onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} onLocate={handleLocate} />
-      <MapSearch onSelect={handleMapSearch} className="absolute top-[96px] left-[452px] z-30" />
       <LayerManager />
       <MapLegend />
       <BottomBar />

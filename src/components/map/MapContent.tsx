@@ -30,11 +30,11 @@ const createShelterIcon = (shelter: typeof mockShelters[0], isHighlighted: boole
     : Math.round((shelter.available_capacity / shelter.total_capacity) * 100);
     
   let color: string;
-  if (vacancyPct <= 0) color = '#dc2626';
-  else if (vacancyPct <= 10) color = '#ef4444';
-  else if (vacancyPct <= 30) color = '#f97316';
-  else if (vacancyPct <= 60) color = '#eab308';
-  else color = '#22c55e';
+  if (vacancyPct <= 0) color = '#ef4444';       // FULL (Load >= 100)
+  else if (vacancyPct <= 5) color = '#f97316';  // CRITICAL (Load >= 95)
+  else if (vacancyPct <= 20) color = '#f59e0b'; // NEAR CAP (Load >= 80)
+  else if (vacancyPct <= 40) color = '#eab308'; // MODERATE (Load >= 60)
+  else color = '#10b981';                       // AVAILABLE (Load < 60)
 
   const label = vacancyPct <= 0 ? 'FULL' : `${vacancyPct}%`;
   const size = isHighlighted ? 44 : 28;
@@ -320,19 +320,19 @@ export default function MapContent({ forcedLayers, highlightShelters = false }: 
                   <div style={{ marginBottom: '8px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', marginBottom: '2px' }}>
                       <span style={{ color: '#64748b' }}>Current Vacancy</span>
-                      <span style={{ fontWeight: 800, color: vacancyPct <= 10 ? '#ef4444' : vacancyPct <= 30 ? '#f97316' : '#22c55e' }}>{vacancyPct}%</span>
+                      <span style={{ fontWeight: 800, color: vacancyPct <= 0 ? '#ef4444' : vacancyPct <= 5 ? '#f97316' : vacancyPct <= 20 ? '#f59e0b' : vacancyPct <= 40 ? '#eab308' : '#10b981' }}>{vacancyPct}%</span>
                     </div>
                     <div style={{ width: '100%', height: '6px', backgroundColor: '#e2e8f0', borderRadius: '3px', overflow: 'hidden', marginBottom: '4px' }}>
-                      <div style={{ width: Math.min(vacancyPct, 100) + '%', height: '100%', borderRadius: '3px', backgroundColor: vacancyPct <= 10 ? '#ef4444' : vacancyPct <= 30 ? '#f97316' : vacancyPct <= 60 ? '#eab308' : '#22c55e' }} />
+                      <div style={{ width: Math.min(vacancyPct, 100) + '%', height: '100%', borderRadius: '3px', backgroundColor: vacancyPct <= 0 ? '#ef4444' : vacancyPct <= 5 ? '#f97316' : vacancyPct <= 20 ? '#f59e0b' : vacancyPct <= 40 ? '#eab308' : '#10b981' }} />
                     </div>
                     
                     {/* Projected Vacancy Bar */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', marginBottom: '2px' }}>
                       <span style={{ color: '#64748b' }}>Projected Vacancy (after arrivals)</span>
-                      <span style={{ fontWeight: 800, color: projectedVacancyPct <= 10 ? '#ef4444' : projectedVacancyPct <= 30 ? '#f97316' : '#22c55e' }}>{projectedVacancyPct}%</span>
+                      <span style={{ fontWeight: 800, color: projectedVacancyPct <= 0 ? '#ef4444' : projectedVacancyPct <= 5 ? '#f97316' : projectedVacancyPct <= 20 ? '#f59e0b' : projectedVacancyPct <= 40 ? '#eab308' : '#10b981' }}>{projectedVacancyPct}%</span>
                     </div>
                     <div style={{ width: '100%', height: '6px', backgroundColor: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
-                      <div style={{ width: Math.min(projectedVacancyPct, 100) + '%', height: '100%', borderRadius: '3px', backgroundColor: projectedVacancyPct <= 10 ? '#ef4444' : projectedVacancyPct <= 30 ? '#f97316' : projectedVacancyPct <= 60 ? '#eab308' : '#22c55e' }} />
+                      <div style={{ width: Math.min(projectedVacancyPct, 100) + '%', height: '100%', borderRadius: '3px', backgroundColor: projectedVacancyPct <= 0 ? '#ef4444' : projectedVacancyPct <= 5 ? '#f97316' : projectedVacancyPct <= 20 ? '#f59e0b' : projectedVacancyPct <= 40 ? '#eab308' : '#10b981' }} />
                     </div>
                   </div>
                   <div style={{ background: '#f0fdf4', borderRadius: '4px', padding: '6px', border: '1px solid #dcfce7', marginBottom: '6px' }}>

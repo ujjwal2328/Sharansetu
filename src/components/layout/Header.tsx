@@ -67,10 +67,10 @@ export default function Header() {
               </div>
               <div className="flex flex-col justify-center">
                 <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">
-                  Operation Center
+                  Scenario Simulator
                 </span>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] font-bold text-slate-200 leading-none">Raipur EOC (Alpha)</span>
+                  <span className="text-[11px] font-bold text-slate-200 leading-none">Select Route to Closure</span>
                   {opsExpanded ? <ChevronUp className="h-3 w-3 text-slate-400" /> : <ChevronDown className="h-3 w-3 text-slate-400" />}
                 </div>
               </div>
@@ -82,7 +82,7 @@ export default function Header() {
 
             {/* Dropdown Content */}
             {opsExpanded && (
-              <div className="absolute top-[44px] right-0 w-[340px] h-[500px] bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-slate-200 overflow-hidden z-[100] animate-in fade-in slide-in-from-top-4 duration-200">
+              <div className="absolute top-[44px] right-0 w-[340px] bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-slate-200 overflow-hidden z-[100] animate-in fade-in slide-in-from-top-4 duration-200">
                 <SimulateDisruptionPanel />
               </div>
             )}

@@ -7,7 +7,6 @@ import AlertTicker from "@/components/dashboard/AlertTicker";
 import FloatingOpsPanel from "@/components/dashboard/FloatingOpsPanel";
 import FloatingSimPanel from "@/components/dashboard/FloatingSimPanel";
 import FloatingIntelPanel from "@/components/dashboard/FloatingIntelPanel";
-import FloatingConditionsPanel from "@/components/dashboard/FloatingConditionsPanel";
 import FloatingTimeline from "@/components/dashboard/FloatingTimeline";
 import BottomBar from "@/components/dashboard/BottomBar";
 import MapToolbar from "@/components/map/MapToolbar";
@@ -82,8 +81,6 @@ export default function Dashboard() {
         <>
           {/* Left: Shelter Finder */}
           <FloatingOpsPanel />
-          {/* Right: Changing Conditions (citizens see live data too) */}
-          <FloatingConditionsPanel />
         </>
       )}
 
@@ -100,9 +97,6 @@ export default function Dashboard() {
 
           {/* Right: Intelligence Panel */}
           <FloatingIntelPanel />
-
-          {/* Right-center: Changing Conditions */}
-          <FloatingConditionsPanel />
 
           {/* Bottom-left: Timeline */}
           <FloatingTimeline />

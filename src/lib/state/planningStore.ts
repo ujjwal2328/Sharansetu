@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { EvacuationAssignment, PlanState, ScenarioState, TimelineEvent, PlanDelta, PlanIntelligence } from '@/types';
 
 export type BasemapType = 'standard' | 'humanitarian' | 'dark';
+export type UserRole = 'citizen' | 'authority';
 
 interface MapLayersState {
   population: boolean;
@@ -24,6 +25,9 @@ interface PlanningStoreState {
   mapLayers: MapLayersState;
   basemap: BasemapType;
   
+  // Role
+  userRole: UserRole;
+
   // Panel UI State
   opsExpanded: boolean;
   intelExpanded: boolean;
@@ -42,6 +46,7 @@ interface PlanningStoreState {
   resetToBaseline: (baselineScenario: ScenarioState, baselinePlan: PlanState) => void;
   toggleLayer: (layer: keyof MapLayersState) => void;
   setBasemap: (basemap: BasemapType) => void;
+  setUserRole: (role: UserRole) => void;
   setOpsExpanded: (v: boolean) => void;
   setIntelExpanded: (v: boolean) => void;
   setTimelineExpanded: (v: boolean) => void;
@@ -80,6 +85,7 @@ export const usePlanningStore = create<PlanningStoreState>((set) => ({
 
   mapLayers: { population: true, shelters: true, routes: true, blockedRoads: true, riskZones: true },
   basemap: 'standard',
+  userRole: 'citizen',
   opsExpanded: true,
   intelExpanded: true,
   timelineExpanded: false,
@@ -134,6 +140,7 @@ export const usePlanningStore = create<PlanningStoreState>((set) => ({
     mapLayers: { ...state.mapLayers, [layer]: !state.mapLayers[layer] }
   })),
   setBasemap: (basemap) => set({ basemap }),
+  setUserRole: (role) => set({ userRole: role }),
   setOpsExpanded: (v) => set({ opsExpanded: v }),
   setIntelExpanded: (v) => set({ intelExpanded: v }),
   setTimelineExpanded: (v) => set({ timelineExpanded: v }),

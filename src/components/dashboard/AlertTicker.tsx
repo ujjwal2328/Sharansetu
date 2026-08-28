@@ -10,15 +10,15 @@ export default function AlertTicker() {
   const { intelligence } = planState;
 
   return (
-    <div className="absolute top-[44px] left-0 right-0 z-40 bg-red-950/85 backdrop-blur-sm border-b border-red-900/50">
-      <div className="flex items-center gap-4 px-4 py-1.5 text-[11px] overflow-x-auto whitespace-nowrap">
-        <div className="flex items-center gap-1.5 text-red-400 font-bold">
-          <AlertTriangle className="h-3.5 w-3.5" />
+    <div className="absolute top-[56px] left-0 right-0 z-40 bg-red-950/90 backdrop-blur-sm border-b border-red-900/50">
+      <div className="flex items-center gap-5 px-5 py-2.5 text-xs overflow-x-auto whitespace-nowrap">
+        <div className="flex items-center gap-2 text-red-400 font-bold">
+          <AlertTriangle className="h-4 w-4" />
           <span>FLOOD ALERT</span>
         </div>
         <span className="text-red-300/40">|</span>
-        <div className="flex items-center gap-1.5 text-white">
-          <Droplets className="h-3 w-3 text-blue-400" />
+        <div className="flex items-center gap-2 text-white">
+          <Droplets className="h-3.5 w-3.5 text-blue-400" />
           <span className="font-semibold">Raipur Urban Flood</span>
         </div>
         <span className="text-red-300/40">|</span>

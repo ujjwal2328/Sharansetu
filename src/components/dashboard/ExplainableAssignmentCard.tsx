@@ -1,5 +1,5 @@
 import { EvacuationAssignment } from "@/types";
-import { ChevronDown, ChevronUp, Route, Clock, Users, ShieldAlert, CheckCircle2, AlertTriangle, AlertCircle } from "lucide-react";
+import { ChevronDown, ChevronUp, Route, Clock, Users, ShieldAlert, CheckCircle2, AlertTriangle, AlertCircle, Bot } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 
@@ -34,6 +34,11 @@ export default function ExplainableAssignmentCard({ assignment, zoneName, shelte
           <div className="flex items-center gap-3 mt-1 text-xs text-slate-500">
             <span className="flex items-center gap-1"><Users className="h-3 w-3" /> {assignment.assigned_population}</span>
             {!isUnassigned && <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {assignment.estimated_travel_time_mins}m</span>}
+            {!isUnassigned && (
+              <span className="flex items-center gap-1 text-indigo-600 bg-indigo-50 px-1 rounded border border-indigo-100 font-semibold">
+                <Bot className="h-2.5 w-2.5" /> AI Score: {assignment.score?.total || 0}/100
+              </span>
+            )}
           </div>
         </div>
         <div>
@@ -54,7 +59,9 @@ export default function ExplainableAssignmentCard({ assignment, zoneName, shelte
           ) : (
             <div className="space-y-4">
               <div>
-                <div className="font-semibold text-slate-700 text-xs uppercase tracking-wider mb-2">Why this assignment?</div>
+                <div className="font-semibold text-indigo-700 text-xs uppercase tracking-wider mb-2 flex items-center gap-1">
+                  <Bot className="h-3 w-3" /> AI Allocation Rationale
+                </div>
                 <div className="space-y-1">
                   {assignment.score?.breakdown.map((reason, idx) => (
                     <div key={idx} className={`text-xs ${reason.startsWith('✓') ? 'text-emerald-700' : 'text-amber-700'}`}>

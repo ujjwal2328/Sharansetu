@@ -193,7 +193,28 @@ export default function MapContent() {
   }, [scenarioState.blocked_roads, mapLayers.blockedRoads]);
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full relative">
+      {/* Compass Rose */}
+      <div className="absolute top-4 right-4 z-[500] bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg border border-slate-200" style={{ width: '56px', height: '56px' }}>
+        <svg viewBox="0 0 100 100" className="w-full h-full">
+          {/* North arrow (red) */}
+          <polygon points="50,8 44,48 56,48" fill="#ef4444" />
+          {/* South arrow (white/gray) */}
+          <polygon points="50,92 44,52 56,52" fill="#94a3b8" />
+          {/* East arrow */}
+          <polygon points="92,50 52,44 52,56" fill="#94a3b8" />
+          {/* West arrow */}
+          <polygon points="8,50 48,44 48,56" fill="#94a3b8" />
+          {/* Center circle */}
+          <circle cx="50" cy="50" r="4" fill="#1e293b" />
+          {/* Labels */}
+          <text x="50" y="6" textAnchor="middle" fontSize="10" fontWeight="800" fill="#ef4444">N</text>
+          <text x="50" y="99" textAnchor="middle" fontSize="9" fontWeight="700" fill="#64748b">S</text>
+          <text x="97" y="53" textAnchor="middle" fontSize="9" fontWeight="700" fill="#64748b">E</text>
+          <text x="3" y="53" textAnchor="middle" fontSize="9" fontWeight="700" fill="#64748b">W</text>
+        </svg>
+      </div>
+
       <MapContainer center={center} zoom={13} scrollWheelZoom={true} zoomControl={false} style={{ height: '100%', width: '100%', zIndex: 0 }}>
         <MapController mapRef={mapRef} />
         <CoordinatesDisplay />

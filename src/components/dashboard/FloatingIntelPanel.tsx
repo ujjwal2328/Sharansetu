@@ -12,7 +12,7 @@ export default function FloatingIntelPanel() {
   const { assignments } = planState;
 
   return (
-    <div className="absolute top-[76px] right-3 z-30 w-[320px] flex flex-col" style={{ maxHeight: 'calc(100vh - 130px)' }}>
+    <div className="absolute top-[96px] right-3 z-30 w-[320px] flex flex-col" style={{ maxHeight: 'calc(100vh - 150px)' }}>
       <div
         className="bg-slate-900/95 backdrop-blur-sm text-white px-3 py-2 flex items-center justify-between cursor-pointer rounded-t-lg border border-slate-700/50 select-none"
         onClick={() => setIntelExpanded(!intelExpanded)}

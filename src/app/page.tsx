@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import Header from "@/components/layout/Header";
 import AlertTicker from "@/components/dashboard/AlertTicker";
 import FloatingOpsPanel from "@/components/dashboard/FloatingOpsPanel";
+import FloatingSimPanel from "@/components/dashboard/FloatingSimPanel";
 import FloatingIntelPanel from "@/components/dashboard/FloatingIntelPanel";
 import FloatingConditionsPanel from "@/components/dashboard/FloatingConditionsPanel";
 import FloatingTimeline from "@/components/dashboard/FloatingTimeline";
@@ -14,6 +15,7 @@ import LayerManager from "@/components/map/LayerManager";
 import MapLegend from "@/components/map/MapLegend";
 import MapSearch from "@/components/map/MapSearch";
 import { Skeleton } from "@/components/ui/skeleton";
+import KpiRow from "@/components/dashboard/KpiRow";
 
 import { usePlanningStore } from "@/lib/state/planningStore";
 import { mockPopulationZones, mockShelters, mockRoads } from "@/lib/services/mockData";
@@ -25,7 +27,7 @@ const DynamicMap = dynamic(() => import("@/components/map/MapContent"), {
 });
 
 export default function Dashboard() {
-  const { scenarioState, planState, setPlanState, addTimelineEvent, timelineEvents } = usePlanningStore();
+  const { scenarioState, planState, setPlanState, addTimelineEvent, timelineEvents, userRole } = usePlanningStore();
 
   // Initialize baseline plan on mount
   useEffect(() => {
@@ -72,31 +74,51 @@ export default function Dashboard() {
 
       {/* FLOATING OVERLAYS — all absolute/z-indexed over the map */}
 
-      {/* Top: Header + Alert Ticker */}
+      {/* Top: Header + Alert Ticker (both modes) */}
       <Header />
       <AlertTicker />
 
-      {/* Left: Operations Panel */}
-      <FloatingOpsPanel />
+      {/* ====== CITIZEN MODE ====== */}
+      {userRole === 'citizen' && (
+        <>
+          {/* Left: Shelter Finder */}
+          <FloatingOpsPanel />
+          {/* Right: Changing Conditions (citizens see live data too) */}
+          <FloatingConditionsPanel />
+        </>
+      )}
 
-      {/* Left: Map Toolbar */}
+      {/* ====== AUTHORITY MODE ====== */}
+      {userRole === 'authority' && (
+        <>
+          {/* Left: Operations / Simulation Panel */}
+          <FloatingSimPanel />
+          
+          {/* Top Center: KPI Row */}
+          <div className="absolute top-[100px] left-[320px] right-[340px] z-30 transition-all">
+            <KpiRow />
+          </div>
+
+          {/* Right: Intelligence Panel */}
+          <FloatingIntelPanel />
+
+          {/* Right-center: Changing Conditions */}
+          <FloatingConditionsPanel />
+
+          {/* Bottom-left: Timeline */}
+          <FloatingTimeline />
+        </>
+      )}
+
+      {/* Shared: Map Controls (both modes) */}
       <MapToolbar onZoomIn={handleZoomIn} onZoomOut={handleZoomOut} onLocate={handleLocate} />
-
-      {/* Left: Search */}
       <MapSearch onSelect={handleMapSearch} />
 
-      {/* Right: Intelligence Panel */}
-      <FloatingIntelPanel />
-      <FloatingConditionsPanel />
-
-      {/* Bottom-left: Timeline */}
-      <FloatingTimeline />
-
-      {/* Bottom-right: Layer Manager + Legend */}
+      {/* Bottom-right: Layer Manager + Legend (both modes) */}
       <LayerManager />
       <MapLegend />
 
-      {/* Bottom: Status Bar */}
+      {/* Bottom: Status Bar (both modes) */}
       <BottomBar />
     </div>
   );

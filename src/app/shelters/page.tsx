@@ -116,7 +116,7 @@ export default function SheltersPage() {
       <Header />
 
       {/* FLOATING SHELTER DATA PANEL */}
-      <div className="absolute top-[80px] left-4 bottom-[36px] w-[500px] z-30 flex flex-col bg-slate-900/85 backdrop-blur-xl rounded-xl border border-slate-700/60 shadow-[0_0_40px_rgba(0,0,0,0.5)] overflow-hidden animate-in fade-in slide-in-from-left-8 duration-500">
+      <div className="absolute top-[80px] left-4 bottom-[36px] w-[420px] z-30 flex flex-col bg-slate-900/85 backdrop-blur-xl rounded-xl border border-slate-700/60 shadow-[0_0_40px_rgba(0,0,0,0.5)] overflow-hidden animate-in fade-in slide-in-from-left-8 duration-500">
         
         {/* Panel Header */}
         <div className="px-5 py-4 border-b border-slate-700/50 bg-slate-800/40 shrink-0 flex items-center justify-between">

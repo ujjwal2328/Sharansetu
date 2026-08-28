@@ -112,7 +112,13 @@ interface DemoRouteData {
 }
 
 interface MapContentProps {
-  forcedLayers?: Partial<import('@/lib/state/planningStore').MapLayers>;
+  forcedLayers?: {
+    population?: boolean;
+    shelters?: boolean;
+    routes?: boolean;
+    blockedRoads?: boolean;
+    riskZones?: boolean;
+  };
   highlightShelters?: boolean;
 }
 

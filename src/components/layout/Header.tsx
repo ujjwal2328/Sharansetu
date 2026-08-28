@@ -1,9 +1,10 @@
 "use client";
 
-import { ShieldAlert, Radio, User, Shield, Building2, ChevronDown, Activity } from "lucide-react";
+import { ShieldAlert, Radio, User, Shield, Building2, ChevronDown, ChevronUp, Activity } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { usePlanningStore } from "@/lib/state/planningStore";
+import SimulateDisruptionPanel from "@/components/dashboard/SimulateDisruptionPanel";
 
 const navLinks = [
   { href: "/", label: "Dashboard" },
@@ -15,7 +16,7 @@ const navLinks = [
 
 export default function Header() {
   const pathname = usePathname();
-  const { userRole, setUserRole } = usePlanningStore();
+  const { userRole, setUserRole, opsExpanded, setOpsExpanded } = usePlanningStore();
 
   return (
     <header className="absolute top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-slate-700/50 h-[56px] flex items-center px-5">
@@ -55,24 +56,38 @@ export default function Header() {
         </div>
 
         {/* Operation Center Section */}
-        <div className="flex items-center gap-2.5 bg-slate-800/40 border border-slate-700/50 rounded-md px-3 py-1 cursor-pointer hover:bg-slate-700/50 transition-colors shadow-sm group">
-          <div className="bg-slate-900 p-1.5 rounded border border-slate-700/50 group-hover:border-slate-600 transition-colors">
-            <Building2 className="h-3.5 w-3.5 text-slate-300" />
-          </div>
-          <div className="flex flex-col justify-center">
-            <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">
-              Operation Center
-            </span>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[11px] font-bold text-slate-200 leading-none">Raipur EOC (Alpha)</span>
-              <ChevronDown className="h-3 w-3 text-slate-400" />
+        {userRole === 'authority' && (
+          <div className="relative">
+            <div 
+              onClick={() => setOpsExpanded(!opsExpanded)}
+              className="flex items-center gap-2.5 bg-slate-800/40 border border-slate-700/50 rounded-md px-3 py-1 cursor-pointer hover:bg-slate-700/50 transition-colors shadow-sm group"
+            >
+              <div className="bg-slate-900 p-1.5 rounded border border-slate-700/50 group-hover:border-slate-600 transition-colors">
+                <Building2 className="h-3.5 w-3.5 text-slate-300" />
+              </div>
+              <div className="flex flex-col justify-center">
+                <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest leading-none mb-1">
+                  Operation Center
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] font-bold text-slate-200 leading-none">Raipur EOC (Alpha)</span>
+                  {opsExpanded ? <ChevronUp className="h-3 w-3 text-slate-400" /> : <ChevronDown className="h-3 w-3 text-slate-400" />}
+                </div>
+              </div>
+              <div className="ml-2 flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </div>
             </div>
+
+            {/* Dropdown Content */}
+            {opsExpanded && (
+              <div className="absolute top-[44px] right-0 w-[340px] h-[500px] bg-white/95 backdrop-blur-md rounded-xl shadow-2xl border border-slate-200 overflow-hidden z-[100] animate-in fade-in slide-in-from-top-4 duration-200">
+                <SimulateDisruptionPanel />
+              </div>
+            )}
           </div>
-          <div className="ml-2 flex h-2 w-2 relative">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-          </div>
-        </div>
+        )}
       </div>
 
       <nav className="ml-5 flex items-center gap-1 text-[12px] font-medium">

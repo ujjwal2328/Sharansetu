@@ -5,7 +5,6 @@ import dynamic from "next/dynamic";
 import Header from "@/components/layout/Header";
 import AlertTicker from "@/components/dashboard/AlertTicker";
 import FloatingOpsPanel from "@/components/dashboard/FloatingOpsPanel";
-import FloatingSimPanel from "@/components/dashboard/FloatingSimPanel";
 import FloatingIntelPanel from "@/components/dashboard/FloatingIntelPanel";
 import FloatingTimeline from "@/components/dashboard/FloatingTimeline";
 import BottomBar from "@/components/dashboard/BottomBar";
@@ -87,9 +86,6 @@ export default function Dashboard() {
       {/* ====== AUTHORITY MODE ====== */}
       {userRole === 'authority' && (
         <>
-          {/* Left: Operations / Simulation Panel */}
-          <FloatingSimPanel />
-          
           {/* Top Center: KPI Row */}
           <div className="absolute top-[100px] left-[320px] right-[340px] z-30 transition-all">
             <KpiRow />

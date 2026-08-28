@@ -74,9 +74,8 @@ export default function Dashboard() {
 
       {/* FLOATING OVERLAYS — all absolute/z-indexed over the map */}
 
-      {/* Top: Header + Alert Ticker (both modes) */}
+      {/* Top: Header (both modes) */}
       <Header />
-      <AlertTicker />
 
       {/* ====== CITIZEN MODE ====== */}
       {userRole === 'citizen' && (

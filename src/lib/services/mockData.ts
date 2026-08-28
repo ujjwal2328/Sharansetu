@@ -1,4 +1,4 @@
-import { PopulationZone, Shelter, RoadCondition, Scenario } from '@/types';
+import { PopulationZone, Shelter, RoadCondition, Scenario, FloodZone } from '@/types';
 
 export const mockPopulationZones: PopulationZone[] = [
   { id: 'zone-1', name: 'Telibandha', location: { lat: 21.2384, lng: 81.6617 }, population: 2400, vulnerable_population: 420, risk_level: 'HIGH', estimated_demand: 1800, priority_level: 'P1' },
@@ -11,6 +11,48 @@ export const mockPopulationZones: PopulationZone[] = [
   { id: 'zone-8', name: 'Fafadih', location: { lat: 21.2612, lng: 81.6360 }, population: 2800, vulnerable_population: 400, risk_level: 'HIGH', estimated_demand: 1500, priority_level: 'P2' },
   { id: 'zone-9', name: 'Gudhiyari', location: { lat: 21.2625, lng: 81.6115 }, population: 3500, vulnerable_population: 750, risk_level: 'MEDIUM', estimated_demand: 1600, priority_level: 'P2' },
   { id: 'zone-10', name: 'Mowa', location: { lat: 21.2721, lng: 81.6654 }, population: 1500, vulnerable_population: 200, risk_level: 'LOW', estimated_demand: 300, priority_level: 'P4' },
+];
+
+export const mockFloodZones: FloodZone[] = [
+  {
+    id: 'flood-1',
+    name: 'Pandri Urban Flood',
+    severity: 'EXTREME',
+    waterLevel: '4.4m (Rising)',
+    polygon: [
+      [21.2610, 81.6440],
+      [21.2625, 81.6490],
+      [21.2580, 81.6500],
+      [21.2550, 81.6480],
+      [21.2560, 81.6450],
+      [21.2590, 81.6430]
+    ]
+  },
+  {
+    id: 'flood-2',
+    name: 'Telibandha Lake Overflow',
+    severity: 'HIGH',
+    waterLevel: '3.1m (Stable)',
+    polygon: [
+      [21.2410, 81.6630],
+      [21.2380, 81.6660],
+      [21.2350, 81.6640],
+      [21.2360, 81.6600],
+      [21.2390, 81.6590]
+    ]
+  },
+  {
+    id: 'flood-3',
+    name: 'Station Road Waterlogging',
+    severity: 'MODERATE',
+    waterLevel: '1.2m (Receding)',
+    polygon: [
+      [21.2550, 81.6370],
+      [21.2560, 81.6340],
+      [21.2520, 81.6330],
+      [21.2510, 81.6360]
+    ]
+  }
 ];
 
 export const mockShelters: Shelter[] = [

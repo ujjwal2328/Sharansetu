@@ -10,6 +10,7 @@ interface MapLayersState {
   routes: boolean;
   blockedRoads: boolean;
   riskZones: boolean;
+  floodZones: boolean;
 }
 
 interface PlanningStoreState {
@@ -83,7 +84,7 @@ export const usePlanningStore = create<PlanningStoreState>((set) => ({
   previousPlanState: null,
   timelineEvents: [],
 
-  mapLayers: { population: true, shelters: true, routes: true, blockedRoads: true, riskZones: true },
+  mapLayers: { population: true, shelters: true, routes: true, blockedRoads: true, riskZones: true, floodZones: true },
   basemap: 'standard',
   userRole: 'citizen',
   opsExpanded: true,

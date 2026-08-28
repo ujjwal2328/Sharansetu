@@ -59,6 +59,18 @@ export default function MapLegend() {
           <span className="w-3 h-3 rounded border-2 border-amber-500 bg-amber-500/20 shrink-0" />
           <span className="text-slate-700">Impact Zone</span>
         </div>
+        <div className="flex items-center gap-2 mt-2 pt-1 border-t border-slate-200">
+          <span className="w-3 h-3 rounded bg-red-900/60 border border-red-500 shrink-0" />
+          <span className="text-slate-700 font-bold text-[9px]">Flood (Extreme)</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="w-3 h-3 rounded bg-orange-900/60 border border-orange-500 shrink-0" />
+          <span className="text-slate-700 font-bold text-[9px]">Flood (High)</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="w-3 h-3 rounded bg-blue-900/60 border border-blue-400 shrink-0" />
+          <span className="text-slate-700 font-bold text-[9px]">Flood (Moderate)</span>
+        </div>
       </div>
     </div>
   );

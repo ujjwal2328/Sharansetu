@@ -20,6 +20,14 @@ export interface PopulationZone {
   priority_level: PriorityLevel;
 }
 
+export interface FloodZone {
+  id: string;
+  name: string;
+  severity: RiskLevel;
+  waterLevel: string;
+  polygon: [number, number][];
+}
+
 export interface MedicalFacilities {
   oxygen_tanks: number;
   first_aid_kits: number;

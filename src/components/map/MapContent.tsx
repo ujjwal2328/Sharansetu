@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, LayerGroup, useMap, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, Polygon, LayerGroup, useMap, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { mockPopulationZones, mockShelters, mockRoads, DEMO_USER_LOCATION, demoRoutes } from '@/lib/services/mockData';
+import { mockPopulationZones, mockShelters, mockRoads, DEMO_USER_LOCATION, demoRoutes, mockFloodZones } from '@/lib/services/mockData';
 import { usePlanningStore } from '@/lib/state/planningStore';
 import { fetchRoute, fetchAlternativeRoutes, OSRMRoute } from '@/lib/services/osrmRouting';
 
@@ -121,6 +121,7 @@ interface MapContentProps {
     routes?: boolean;
     blockedRoads?: boolean;
     riskZones?: boolean;
+    floodZones?: boolean;
   };
   highlightShelters?: boolean;
 }
@@ -214,8 +215,47 @@ export default function MapContent({ forcedLayers, highlightShelters = false }: 
       });
   }, [scenarioState.blocked_roads, mapLayers.blockedRoads]);
 
+  // Animated SVG Wave Definitions for Flood Zones
+  const WaterPatternDefs = () => (
+    <svg style={{ width: 0, height: 0, position: 'absolute' }} aria-hidden="true">
+      <defs>
+        <style>{`
+          @keyframes wave {
+            0% { transform: translateX(0) translateY(0) scale(1); }
+            50% { transform: translateX(-5px) translateY(2px) scale(1.05); }
+            100% { transform: translateX(0) translateY(0) scale(1); }
+          }
+          .water-wave { animation: wave 4s infinite ease-in-out; }
+          .water-wave-slow { animation: wave 6s infinite ease-in-out reverse; }
+        `}</style>
+        
+        {/* EXTREME: Reddish/brown muddy water */}
+        <pattern id="flood-EXTREME" width="40" height="40" patternUnits="userSpaceOnUse">
+          <rect width="40" height="40" fill="#7f1d1d" fillOpacity="0.5" />
+          <path className="water-wave" d="M0 20 Q10 10 20 20 T40 20" fill="none" stroke="#ef4444" strokeWidth="2" strokeOpacity="0.7" />
+          <path className="water-wave-slow" d="M0 30 Q10 20 20 30 T40 30" fill="none" stroke="#b91c1c" strokeWidth="1.5" strokeOpacity="0.5" />
+        </pattern>
+        
+        {/* HIGH: Orange/brown water */}
+        <pattern id="flood-HIGH" width="40" height="40" patternUnits="userSpaceOnUse">
+          <rect width="40" height="40" fill="#7c2d12" fillOpacity="0.5" />
+          <path className="water-wave" d="M0 20 Q10 10 20 20 T40 20" fill="none" stroke="#f97316" strokeWidth="2" strokeOpacity="0.7" />
+          <path className="water-wave-slow" d="M0 30 Q10 20 20 30 T40 30" fill="none" stroke="#c2410c" strokeWidth="1.5" strokeOpacity="0.5" />
+        </pattern>
+        
+        {/* MODERATE: Deep blue water */}
+        <pattern id="flood-MODERATE" width="40" height="40" patternUnits="userSpaceOnUse">
+          <rect width="40" height="40" fill="#1e3a8a" fillOpacity="0.5" />
+          <path className="water-wave" d="M0 20 Q10 10 20 20 T40 20" fill="none" stroke="#60a5fa" strokeWidth="2" strokeOpacity="0.7" />
+          <path className="water-wave-slow" d="M0 30 Q10 20 20 30 T40 30" fill="none" stroke="#3b82f6" strokeWidth="1.5" strokeOpacity="0.5" />
+        </pattern>
+      </defs>
+    </svg>
+  );
+
   return (
     <div className="h-full w-full relative">
+      <WaterPatternDefs />
       {/* Compass Rose */}
       <div className="absolute top-4 right-4 z-[500] bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg border border-slate-200" style={{ width: '56px', height: '56px' }}>
         <svg viewBox="0 0 100 100" className="w-full h-full">
@@ -249,6 +289,38 @@ export default function MapContent({ forcedLayers, highlightShelters = false }: 
             <div style={{ fontSize: '10px', color: '#64748b', marginTop: '2px' }}>This is your current position.</div>
           </Popup>
         </Marker>
+
+        {/* ANIMATED FLOOD ZONES */}
+        {mapLayers.floodZones && mockFloodZones.map(zone => {
+          let borderColor = '#3b82f6';
+          if (zone.severity === 'EXTREME') borderColor = '#ef4444';
+          if (zone.severity === 'HIGH') borderColor = '#f97316';
+          
+          return (
+            <Polygon 
+              key={zone.id} 
+              positions={zone.polygon}
+              pathOptions={{ 
+                fillColor: `url(#flood-${zone.severity})`, 
+                fillOpacity: 0.9, 
+                color: borderColor, 
+                weight: 2,
+                dashArray: '6,4'
+              }}
+            >
+              <Popup maxWidth={260}>
+                <div style={{ fontSize: '11px' }}>
+                  <div style={{ fontWeight: 800, color: borderColor, fontSize: '13px', textTransform: 'uppercase', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontSize: '16px' }}>🌊</span> Flood Zone: {zone.severity}
+                  </div>
+                  <div style={{ fontWeight: 700, color: '#1e293b', fontSize: '12px', marginBottom: '4px' }}>{zone.name}</div>
+                  <div style={{ color: '#64748b' }}>Water Level: <span style={{ fontWeight: 700, color: '#334155' }}>{zone.waterLevel}</span></div>
+                  <div style={{ marginTop: '6px', fontSize: '10px', color: '#64748b' }}>This area is currently experiencing severe waterlogging. Travel is highly dangerous.</div>
+                </div>
+              </Popup>
+            </Polygon>
+          );
+        })}
 
         {/* POPULATION ZONES */}
         {mapLayers.population && mockPopulationZones.map((zone) => {

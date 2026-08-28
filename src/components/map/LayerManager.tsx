@@ -9,6 +9,7 @@ const layerConfig = [
   { key: 'routes' as const, label: 'Evacuation Routes', color: '#6366f1' },
   { key: 'blockedRoads' as const, label: 'Blocked Roads', color: '#ef4444' },
   { key: 'riskZones' as const, label: 'Risk Zones', color: '#f97316' },
+  { key: 'floodZones' as const, label: 'Animated Flood Zones', color: '#0ea5e9' },
 ];
 
 const basemapOptions = [

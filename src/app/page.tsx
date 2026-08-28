@@ -86,8 +86,8 @@ export default function Dashboard() {
       {/* ====== AUTHORITY MODE ====== */}
       {userRole === 'authority' && (
         <>
-          {/* Top Center: KPI Row */}
-          <div className="absolute top-[100px] left-[320px] right-[340px] z-30 transition-all">
+          {/* Left: KPI Panel (Vertical) */}
+          <div className="absolute top-[148px] left-3 z-30 transition-all animate-in fade-in slide-in-from-left-4 duration-500">
             <KpiRow />
           </div>
 

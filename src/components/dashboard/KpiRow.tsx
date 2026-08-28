@@ -68,21 +68,36 @@ export default function KpiRow() {
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-6 gap-3 p-3 bg-slate-50 border-b shrink-0">
+    <div className="flex flex-col gap-3 p-4 bg-slate-900/90 backdrop-blur-md border border-slate-700/50 rounded-xl shadow-2xl w-[260px]">
+      <div className="pb-2 border-b border-slate-700/50 mb-1">
+        <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+          <Activity className="h-3 w-3 text-blue-500" />
+          Live Metrics
+        </h2>
+      </div>
       {kpis.map((kpi, idx) => {
         const Icon = kpi.icon;
+        // Dark mode adjustments for KPI colors
+        let bgClass = "bg-slate-800";
+        let textClass = "text-slate-300";
+        let iconColor = "text-slate-400";
+        
+        if (kpi.bg.includes('blue')) { bgClass = "bg-blue-500/10 border-blue-500/20"; textClass = "text-blue-400"; iconColor = "text-blue-400"; }
+        if (kpi.bg.includes('emerald')) { bgClass = "bg-emerald-500/10 border-emerald-500/20"; textClass = "text-emerald-400"; iconColor = "text-emerald-400"; }
+        if (kpi.bg.includes('red')) { bgClass = "bg-red-500/10 border-red-500/20"; textClass = "text-red-400"; iconColor = "text-red-400"; }
+        if (kpi.bg.includes('amber')) { bgClass = "bg-amber-500/10 border-amber-500/20"; textClass = "text-amber-400"; iconColor = "text-amber-400"; }
+        if (kpi.bg.includes('orange')) { bgClass = "bg-orange-500/10 border-orange-500/20"; textClass = "text-orange-400"; iconColor = "text-orange-400"; }
+
         return (
-          <Card key={idx} className="shadow-sm border-slate-200">
-            <CardContent className="p-3 flex items-center gap-3">
-              <div className={`p-2.5 rounded-lg ${kpi.bg}`}>
-                <Icon className={`h-4 w-4 ${kpi.color}`} />
-              </div>
-              <div>
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider line-clamp-1">{kpi.title}</p>
-                <h3 className="text-xl font-bold text-slate-800 leading-tight">{kpi.value}</h3>
-              </div>
-            </CardContent>
-          </Card>
+          <div key={idx} className={`flex items-center justify-between p-3 rounded-lg border ${bgClass} shadow-sm transition-all hover:bg-opacity-20`}>
+            <div className="flex flex-col">
+              <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">{kpi.title}</span>
+              <span className={`text-xl font-black ${textClass} leading-none`}>{kpi.value}</span>
+            </div>
+            <div className={`p-2 rounded-md bg-slate-900/50`}>
+              <Icon className={`h-4 w-4 ${iconColor}`} />
+            </div>
+          </div>
         );
       })}
     </div>

@@ -164,101 +164,103 @@ export default function SheltersPage() {
           </select>
         </div>
 
-        {/* Data Table */}
+        {/* Data List (Using Flex/Grid instead of Table for perfect guaranteed alignment) */}
         <div className="flex-1 overflow-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
-          <table className="w-full text-sm border-collapse text-slate-300 table-fixed">
-            <thead className="sticky top-0 z-10 bg-slate-900/95 backdrop-blur-sm shadow-md">
-              <tr className="text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-700">
-                <th className="px-4 py-3 w-[38%]">Shelter Facility</th>
-                <th className="px-2 py-3 w-[15%] text-right">Capacity</th>
-                <th className="px-2 py-3 w-[15%] text-right">Incoming</th>
-                <th className="px-2 py-3 w-[15%] text-center">Status</th>
-                <th className="px-2 py-3 w-[12%] text-right">Load %</th>
-                <th className="px-2 py-3 w-[5%] text-center"></th>
-              </tr>
-            </thead>
-            <tbody>
+          <div className="min-w-full flex flex-col">
+            {/* Header Row */}
+            <div className="sticky top-0 z-10 bg-slate-900/95 backdrop-blur-sm shadow-md flex items-center px-4 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-700">
+              <div className="w-[35%] pr-2">Shelter Facility</div>
+              <div className="w-[15%] text-right pr-2">Capacity</div>
+              <div className="w-[15%] text-right pr-2">Incoming</div>
+              <div className="w-[18%] text-center px-1">Status</div>
+              <div className="w-[12%] text-right pr-2">Load %</div>
+              <div className="w-[5%]"></div>
+            </div>
+            
+            {/* Body Rows */}
+            <div className="flex flex-col">
               {filtered.map((shelter) => {
                 const isExpanded = expandedId === shelter.id;
                 return (
-                  <tbody key={shelter.id}>
-                    <tr
-                      className={`border-b border-slate-700/50 cursor-pointer transition-all duration-200 hover:bg-slate-800/50 ${isExpanded ? "bg-slate-800/70" : "bg-transparent"}`}
+                  <div key={shelter.id} className="flex flex-col border-b border-slate-700/50">
+                    
+                    {/* Main Row */}
+                    <div 
+                      className={`flex items-center px-4 py-4 cursor-pointer transition-all duration-200 hover:bg-slate-800/50 ${isExpanded ? "bg-slate-800/70" : "bg-transparent"}`}
                       onClick={() => setExpandedId(isExpanded ? null : shelter.id)}
                     >
-                      <td className="px-4 py-4 truncate">
-                        <div className="font-medium text-slate-200 truncate">{shelter.name}</div>
-                        <div className="text-[11px] text-slate-500 flex items-center gap-1 mt-1 truncate">
+                      <div className="w-[35%] pr-2 overflow-hidden">
+                        <div className="font-medium text-slate-200 truncate" title={shelter.name}>{shelter.name}</div>
+                        <div className="text-[10px] text-slate-500 flex items-center gap-1 mt-1 truncate">
                           <MapPin className="h-3 w-3 shrink-0" />
                           {shelter.location.lat.toFixed(4)}, {shelter.location.lng.toFixed(4)}
                         </div>
-                      </td>
-                      <td className="px-2 py-4 text-right font-mono text-slate-400 truncate">{shelter.total_capacity.toLocaleString()}</td>
-                      <td className="px-2 py-4 text-right font-mono text-emerald-400 font-semibold truncate">+{shelter.incomingPopulation.toLocaleString()}</td>
-                      <td className="px-2 py-4 text-center">
+                      </div>
+                      <div className="w-[15%] text-right pr-2 font-mono text-slate-400 text-xs truncate">
+                        {shelter.total_capacity.toLocaleString()}
+                      </div>
+                      <div className="w-[15%] text-right pr-2 font-mono text-emerald-400 font-semibold text-xs truncate">
+                        +{shelter.incomingPopulation.toLocaleString()}
+                      </div>
+                      <div className="w-[18%] text-center px-1 flex justify-center">
                         <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider whitespace-nowrap ${shelter.statusInfo.color}`}>
                           {shelter.statusInfo.label}
                         </span>
-                      </td>
-                      <td className="px-2 py-4 text-right">
-                        <span className={`text-[11px] font-mono font-bold w-full inline-block ${getLoadTextColor(shelter.projectedLoad)}`}>{shelter.projectedLoad}%</span>
-                      </td>
-                      <td className="px-2 py-4 text-center text-slate-500">
-                        {isExpanded ? <ChevronUp className="h-4 w-4 mx-auto" /> : <ChevronDown className="h-4 w-4 mx-auto" />}
-                      </td>
-                    </tr>
+                      </div>
+                      <div className="w-[12%] text-right pr-2 font-mono font-bold text-xs truncate">
+                        <span className={getLoadTextColor(shelter.projectedLoad)}>{shelter.projectedLoad}%</span>
+                      </div>
+                      <div className="w-[5%] flex justify-center text-slate-500">
+                        {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                      </div>
+                    </div>
 
                     {/* Expanded Detail */}
                     {isExpanded && (
-                      <tr className="bg-slate-900/50 border-b border-slate-700/80 shadow-inner">
-                        <td colSpan={6} className="p-0">
-                          <div className="px-5 py-4 grid grid-cols-2 gap-6 text-xs animate-in fade-in slide-in-from-top-2 duration-200">
-                            
-                            {/* Capacity Breakdown */}
-                            <div className="bg-slate-800/40 border border-slate-700/50 rounded-lg p-3">
-                              <div className="font-semibold text-slate-400 uppercase tracking-widest text-[10px] mb-3 flex items-center gap-1.5">
-                                <Users className="h-3 w-3" /> Capacity Breakdown
-                              </div>
-                              <div className="space-y-2">
-                                <div className="flex justify-between items-center"><span className="text-slate-500">Total Capacity</span><span className="font-mono text-slate-300">{shelter.total_capacity}</span></div>
-                                <div className="flex justify-between items-center"><span className="text-slate-500">Current Occupancy</span><span className="font-mono text-slate-300">{shelter.current_occupancy}</span></div>
-                                <div className="flex justify-between items-center"><span className="text-slate-500">Incoming Evacuees</span><span className="font-mono text-emerald-400">+{shelter.incomingPopulation}</span></div>
-                                <div className="border-t border-slate-700/50 pt-2 flex justify-between items-center"><span className="text-slate-300 font-semibold">Projected Load</span><span className="font-mono font-bold text-white">{shelter.projectedOccupancy}</span></div>
-                              </div>
-                            </div>
-
-                            {/* Assigned Zones */}
-                            <div className="bg-slate-800/40 border border-slate-700/50 rounded-lg p-3">
-                              <div className="font-semibold text-slate-400 uppercase tracking-widest text-[10px] mb-3 flex items-center gap-1.5">
-                                <MapPin className="h-3 w-3" /> Assigned Origin Zones
-                              </div>
-                              {shelter.assignedZones.length > 0 ? (
-                                <div className="space-y-2 max-h-[120px] overflow-y-auto pr-1 custom-scrollbar">
-                                  {shelter.assignedZones.map((az) => (
-                                    <div key={az.zone?.id} className="flex items-center justify-between bg-slate-900/50 border border-slate-700/50 rounded px-2 py-1.5">
-                                      <div>
-                                        <span className="font-medium text-slate-300">{az.zone?.name || "Unknown"}</span>
-                                        <span className="text-slate-500 ml-1 text-[10px]">({az.zone?.priority_level})</span>
-                                      </div>
-                                      <div className="text-right">
-                                        <span className="font-mono font-bold text-emerald-400">{az.population.toLocaleString()}</span>
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              ) : (
-                                <div className="text-slate-500 italic text-center py-4">No zones currently assigned to this shelter.</div>
-                              )}
-                            </div>
+                      <div className="bg-slate-900/50 border-t border-slate-700/80 shadow-inner px-5 py-4 grid grid-cols-2 gap-6 text-xs animate-in fade-in slide-in-from-top-2 duration-200">
+                        {/* Capacity Breakdown */}
+                        <div className="bg-slate-800/40 border border-slate-700/50 rounded-lg p-3">
+                          <div className="font-semibold text-slate-400 uppercase tracking-widest text-[10px] mb-3 flex items-center gap-1.5">
+                            <Users className="h-3 w-3" /> Capacity Breakdown
                           </div>
-                        </td>
-                      </tr>
+                          <div className="space-y-2">
+                            <div className="flex justify-between items-center"><span className="text-slate-500">Total Capacity</span><span className="font-mono text-slate-300">{shelter.total_capacity}</span></div>
+                            <div className="flex justify-between items-center"><span className="text-slate-500">Current Occupancy</span><span className="font-mono text-slate-300">{shelter.current_occupancy}</span></div>
+                            <div className="flex justify-between items-center"><span className="text-slate-500">Incoming Evacuees</span><span className="font-mono text-emerald-400">+{shelter.incomingPopulation}</span></div>
+                            <div className="border-t border-slate-700/50 pt-2 flex justify-between items-center"><span className="text-slate-300 font-semibold">Projected Load</span><span className="font-mono font-bold text-white">{shelter.projectedOccupancy}</span></div>
+                          </div>
+                        </div>
+
+                        {/* Assigned Zones */}
+                        <div className="bg-slate-800/40 border border-slate-700/50 rounded-lg p-3">
+                          <div className="font-semibold text-slate-400 uppercase tracking-widest text-[10px] mb-3 flex items-center gap-1.5">
+                            <MapPin className="h-3 w-3" /> Assigned Origin Zones
+                          </div>
+                          {shelter.assignedZones.length > 0 ? (
+                            <div className="space-y-2 max-h-[120px] overflow-y-auto pr-1 custom-scrollbar">
+                              {shelter.assignedZones.map((az) => (
+                                <div key={az.zone?.id} className="flex items-center justify-between bg-slate-900/50 border border-slate-700/50 rounded px-2 py-1.5">
+                                  <div>
+                                    <span className="font-medium text-slate-300">{az.zone?.name || "Unknown"}</span>
+                                    <span className="text-slate-500 ml-1 text-[10px]">({az.zone?.priority_level})</span>
+                                  </div>
+                                  <div className="text-right">
+                                    <span className="font-mono font-bold text-emerald-400">{az.population.toLocaleString()}</span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="text-slate-500 italic text-center py-4">No zones currently assigned to this shelter.</div>
+                          )}
+                        </div>
+                      </div>
                     )}
-                  </tbody>
+                  </div>
                 );
               })}
-            </tbody>
-          </table>
+            </div>
+          </div>
         </div>
       </div>
 
